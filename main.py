@@ -15,12 +15,12 @@ method = 'user.getInfo'
 count = 0
 # Generate a random Last.fm username or use a predefined list of usernames
 # Here, we use a predefined list of usernames for demonstration purposes
-usernames = ['Robert', 'Chris', 'Lopes','Lia','Christopher','Nicole','RJ']
+usernames = ['Robert', 'Chris', 'Lopes','Lia','Nicole','RJ']
 
 
 
 
-while count <7:
+while count <6:
         
         # Connect to the SQLite database
         conn = sqlite3.connect('db.db')
@@ -89,8 +89,9 @@ while count <7:
            
 
 else:
-    print('Error making API call. Status code:', response.status_code)
-    count+=1
+    if count !=6:
+     print('Error making API call. Status code:', response.status_code)
+    
 
 
 
@@ -109,7 +110,7 @@ temp = []
 for row in rows:
     username = row[1]
     country = row[2]
-    temp = row[1]
+    temp.append(row[1])
     #Process the data as needed
     #print("Username:", username)
     #print("Country:", country)
@@ -118,14 +119,16 @@ for row in rows:
 # Define the method to retrieve random users
 method = 'user.getRecentTracks'
 
+count = len(temp)
 
-
-for x in temp:
+while count !=0:
+    username=temp.pop()
+    print("WE HERE : " , username)
     params = {
             'api_key': api_key,
             'format': 'json',
             'limit': 1,  # Number of random users to retrieve
-            'user': temp[x]
+            'user': username
         }
     
     response = requests.get(base_url + '?method=' + method, params=params)
@@ -135,7 +138,10 @@ for x in temp:
          # Extract the JSON data from the response
         data = response.json()
         print(data)
-
+        print('\n')
+        print('\n')
+        print('\n')
+    count -= 1
 
 
 
