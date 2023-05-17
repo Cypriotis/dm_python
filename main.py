@@ -23,7 +23,7 @@ usernames = ['Robert', 'Chris', 'Lopes','Lia','Nicole','RJ']
 while count <6:
         
         # Connect to the SQLite database
-        conn = sqlite3.connect('db.db')
+        conn = sqlite3.connect('db1.db')
         cursor = conn.cursor()
 
         # Create the Users table if it doesn't exist
@@ -41,11 +41,10 @@ while count <6:
     
         # Create the Albums table if it doesn't exist
         cursor.execute('''CREATE TABLE IF NOT EXISTS Albums (
-                    album_id INT PRIMARY KEY,
+                    album_id VARCHAR(250) PRIMARY KEY,
                     album_name VARCHAR(100),
-                    group_id INT,
-                    release_year INT,
-                    FOREIGN KEY (group_id) REFERENCES MusicGroups(group_id)
+                    artist_name VARCHAR(200),
+                    release_year INT
                     )''')
         
         # Define the parameters for the method
@@ -148,6 +147,8 @@ count = 6
 # Define the method to get user's top artists
 method = 'user.getTopArtists'
 
+artists = []
+
 while count >= 1:
     username = users.pop()
     # Define the parameters for the method
@@ -156,7 +157,7 @@ while count >= 1:
         'format': 'json',
         'user': username,
         'period': 'overall',  # Choose the desired period (overall, 7day, 1month, 3month, 6month, 12month)
-        'limit': 2  # Number of top artists to retrieve
+        'limit': 1  # Number of top artists to retrieve
     }
 
 
@@ -173,6 +174,7 @@ while count >= 1:
         for artist in top_artists:
          artist_id = artist['mbid']
          artist_name = artist['name']
+         artists.append(artist_name)
 
          print('A , B : ', artist_id , artist_name)
         
@@ -188,9 +190,51 @@ while count >= 1:
 
     count -= 1
 
+# Define the method to get top albums of an artist
+method = 'artist.getTopAlbums'
+
+count = 6
+
+print(artists)
+    
+while count >= 1:
+    artistsTemp = artists.pop()
+    # Define the parameters for the method
+    params = {
+    'api_key': api_key,
+    'format': 'json',
+    'artist': artistsTemp,
+    'limit': 1  # Number of top albums to retrieve
+    }   
+    count -=1
 
 
+    # Make the API call to get the top albums of the artist
+    response = requests.get(base_url + '?method=' + method, params=params)
+
+    # Check if the request was successful (status code 200)
+    if response.status_code == 200:
+        # Extract the JSON data from the response
+        data = response.json()
+        top_albums = data['topalbums']['album']
+
+        # Iterate over the top albums
+        for album in top_albums:
+            album_name = album['name']
+            artist_name = album['artist']['name']
+
+            # Insert the album information into the Albums table
+            cursor.execute("INSERT INTO Albums (album_name, artist_name) VALUES (?, ?)",
+                        (album_name, artistsTemp))
+
+        # Commit the changes to the database
+        conn.commit()
+
+        
+
+    else:
+        print('Error making API call. Status code:', response.status_code)
 
 
-# Close the cursor and the database connection
-cursor.close()
+# Close the database connection
+        conn.close()
