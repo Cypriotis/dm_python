@@ -35,11 +35,8 @@ while count <6:
         
         # Create the MusicGroups table if it doesn't exist
         cursor.execute('''CREATE TABLE IF NOT EXISTS MusicGroups (
-                            group_id INT PRIMARY KEY,
-                            group_name VARCHAR(100),
-                            genre VARCHAR(50),
-                            year_formed INT,
-                            country VARCHAR(50)
+                            group_id VARCHAR(254) PRIMARY KEY,
+                            group_name VARCHAR(100)
                             )''')
     
         # Create the Albums table if it doesn't exist
@@ -105,12 +102,14 @@ cursor.execute("SELECT * FROM Users")
 rows = cursor.fetchall()
 
 temp = []
+users = []
 
 # Iterate over the rows and process the data
 for row in rows:
     username = row[1]
     country = row[2]
     temp.append(row[1])
+    users.append(row[1])
     #Process the data as needed
     #print("Username:", username)
     #print("Country:", country)
@@ -120,6 +119,7 @@ for row in rows:
 method = 'user.getRecentTracks'
 
 count = len(temp)
+
 
 while count !=0:
     username=temp.pop()
@@ -141,6 +141,51 @@ while count !=0:
         print('\n')
         print('\n')
         print('\n')
+    count -= 1
+
+
+count = 6
+# Define the method to get user's top artists
+method = 'user.getTopArtists'
+
+while count >= 1:
+    username = users.pop()
+    # Define the parameters for the method
+    params = {
+        'api_key': api_key,
+        'format': 'json',
+        'user': username,
+        'period': 'overall',  # Choose the desired period (overall, 7day, 1month, 3month, 6month, 12month)
+        'limit': 2  # Number of top artists to retrieve
+    }
+
+
+    # Make the API call to get user's top artists
+    response = requests.get(base_url + '?method=' + method, params=params)
+
+    # Check if the request was successful (status code 200)
+    if response.status_code == 200:
+        # Extract the JSON data from the response
+        data = response.json()
+
+        top_artists = data['topartists']['artist']
+
+        for artist in top_artists:
+         artist_id = artist['mbid']
+         artist_name = artist['name']
+
+         print('A , B : ', artist_id , artist_name)
+        
+        # Insert the artist information into the Artists table
+        cursor.execute("INSERT INTO MusicGroups (group_id, group_name) VALUES (?, ?)",
+                       (artist_id, artist_name))
+        
+        # Commit the changes to the database
+        conn.commit()
+
+
+
+
     count -= 1
 
 
