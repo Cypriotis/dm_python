@@ -168,9 +168,10 @@ while count >= 1:
     if response.status_code == 200:
         # Extract the JSON data from the response
         data = response.json()
+        
 
         top_artists = data['topartists']['artist']
-
+        print(data['topartists']['artist'])
         for artist in top_artists:
          artist_id = artist['mbid']
          artist_name = artist['name']
