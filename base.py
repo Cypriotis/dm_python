@@ -1,5 +1,7 @@
 from db_connect import DatabaseConnector
 from lastfm_api import LastFmAPI
+import pandas as pd
+from manageData import manageMissingCells
 
 # MySQL database connection details
 host = 'localhost'
@@ -19,7 +21,7 @@ db_connector.connect()
 #debug action
 db_connector.execute_query('''DROP TABLE Users''')
 
-db_connector.execute_query('''DROP TABLE Artists''')
+#db_connector.execute_query('''DROP TABLE Artists''')
 
 db_connector.execute_query('''DROP TABLE Albums''')
 
@@ -47,23 +49,24 @@ while count > 0:
         current_name = usernames[count-1]
         user_info = lastfm_api.get_user_info(current_name)
         user_top_artists = lastfm_api.get_user_top_artists(current_name)
+
         top_artists = user_top_artists['topartists']['artist']
+
         name = user_info['user']['name']
-        print(current_name)
         country = user_info['user']['country']
         artist_name = top_artists[0]['name']
         mbid = top_artists[0]['mbid']
         artist_url = top_artists[0]['url']
 
-        print("mbid : " , mbid , "url: " , artist_url)
-
         query = f"INSERT INTO Artists (artists_name, mbid,artist_url) VALUES ('{artist_name}','{mbid}','{artist_url}')"
+        query2 = f"INSERT INTO Users (username, country , favorite_artist) VALUES ('{name}', '{country}' , '{artist_name}')"
+
         db_connector.execute_query(query)
+        db_connector.execute_query(query2)
         db_connector.commit_changes()
-        query = f"INSERT INTO Users (username, country , favorite_artist) VALUES ('{name}', '{country}' , '{artist_name}')"
-        db_connector.execute_query(query)
-        db_connector.commit_changes()
+
         flag = 4
+        
         for artist in top_artists:
             flag -= 1
             artist_name = artist['name']
@@ -75,9 +78,10 @@ while count > 0:
              db_connector.execute_query(query)
              db_connector.execute_query(query2)
              db_connector.commit_changes()
-             print(album_name)
 
         count -= 1
 
+print("We here")
 
-# Disconnect from the databas
+#Execute the following function with the table name as parameter to manage possible missing cells on database
+manageMissingCells.execute("Artists")

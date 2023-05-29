@@ -34,3 +34,14 @@ class DatabaseConnector:
 
     def commit_changes(self):
         self.conn.commit()
+
+    def get_column_names(self, table_name):
+        query = f"SELECT * FROM {table_name} LIMIT 1"
+        self.execute_query(query)
+        column_names = [desc[0] for desc in self.cursor.description]
+        return column_names
+    
+    def execute_query_with_dataframe(self, query, dataframe):
+        for row in dataframe.itertuples(index=False):
+            self.execute_query(query, row)
+        self.commit_changes()
