@@ -1,7 +1,7 @@
 from db_connect import DatabaseConnector
 from lastfm_api import LastFmAPI
 import pandas as pd
-from manageData import manageMissingCells
+from manageData import manageMissingCells, manageDuplicateInputs
 
 # MySQL database connection details
 host = 'localhost'
@@ -85,3 +85,6 @@ print("We here")
 
 #Execute the following function with the table name as parameter to manage possible missing cells on database
 manageMissingCells.execute("Artists")
+
+manageDuplicateInputs.execute("Artists","mbid")
+
