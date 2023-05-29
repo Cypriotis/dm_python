@@ -16,7 +16,16 @@ db_connector = DatabaseConnector(host, username, password, database, port)
 db_connector.connect()
 
 
-db_connector.execute_query('''CREATE TABLE IF NOT EXISTS Users (user_id INT PRIMARY KEY AUTO_INCREMENT, username VARCHAR(254), country VARCHAR(254), favorite_artists VARCHAR(254))''')
+#debug action
+db_connector.execute_query('''DROP TABLE Users''')
+
+db_connector.execute_query('''DROP TABLE Artists''')
+
+db_connector.execute_query('''DROP TABLE Albums''')
+
+db_connector.execute_query('''DROP TABLE UsersFavInfo''')
+#creating tables if not exists
+db_connector.execute_query('''CREATE TABLE IF NOT EXISTS Users (user_id INT PRIMARY KEY AUTO_INCREMENT, username VARCHAR(254), country VARCHAR(254), favorite_artist VARCHAR(254))''')
 
 db_connector.execute_query('''CREATE TABLE IF NOT EXISTS Artists (artists_name VARCHAR(254),mbid VARCHAR(254),artists_url VARCHAR(254))''')
 
@@ -30,24 +39,35 @@ db_connector.commit_changes()
 # Create an instance of the LastFmAPI
 lastfm_api = LastFmAPI(api_key)
 
-# Example query execution
-# query = "INSERT INTO Users (username, country) VALUES ('John', 'john@example.com')"
-# db_connector.execute_query(query)
-# db_connector.commit_changes()
 
 usernames = ['Robert', 'Chris', 'Lopes', 'Lia', 'Nicole', 'RJ']
 count = len(usernames)
 
 while count > 0:
-    user_info = lastfm_api.get_user_info(usernames[count-1])
-
-    if user_info is not None:
+        current_name = usernames[count-1]
+        user_info = lastfm_api.get_user_info(current_name)
+        user_top_artists = lastfm_api.get_user_top_artists(current_name)
+        top_artists = user_top_artists['topartists']['artist']
         name = user_info['user']['name']
+        print(current_name)
         country = user_info['user']['country']
-        query = f"INSERT INTO Users (username, country) VALUES ('{name}', '{country}')"
+        artist_name = top_artists[0]['name']
+        query = f"INSERT INTO Users (username, country , favorite_artist) VALUES ('{name}', '{country}' , '{artist_name}')"
         db_connector.execute_query(query)
         db_connector.commit_changes()
-    count -= 1
+        flag = 4
+        for artist in top_artists:
+            flag -= 1
+            artist_name = artist['name']
+            artists_albums = lastfm_api.get_artists_top_albums(artist_name)
+            if(flag>0):
+             album_name = artists_albums['topalbums']['album'][flag]['name']
+             query = f"INSERT INTO UsersFavInfo (user_name , artists_name, album_name) VALUES ('{current_name}', '{artist_name}', '{album_name}')"
+             db_connector.execute_query(query)
+             db_connector.commit_changes()
+             print(album_name)
+
+        count -= 1
 
 count = len(usernames)
 artists_sum = 0
