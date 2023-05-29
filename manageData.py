@@ -53,5 +53,25 @@ class manageDuplicateInputs:
             engine.dispose()
 
 class manageOutlierInputs:
-        def tesT(): 
-             print("Missing Implementation")
+        def execute(t_name,col1): 
+             # Create the SQLAlchemy engine
+            engine = create_engine(url)
+
+            # Retrieve data from the database into a pandas DataFrame
+            query = 'SELECT * FROM '
+            query += t_name
+            df = pd.read_sql_query(query, engine)
+
+            # Identify and handle outliers
+            column_name = col1  # Replace with the actual column name
+            lower_bound = 0  # Replace with the lower bound value for outliers
+            upper_bound = 5  # Replace with the upper bound value for outliers
+
+            # Replace outliers with null values
+            df.loc[(df[col1] < lower_bound) | (df[col1] > upper_bound), col1] = None
+
+            # Write the modified DataFrame back to the database
+            df.to_sql(t_name, engine, if_exists='replace', index=False)
+
+            # Close the database connection
+            engine.dispose()

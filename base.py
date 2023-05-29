@@ -1,7 +1,7 @@
 from db_connect import DatabaseConnector
 from lastfm_api import LastFmAPI
 import pandas as pd
-from manageData import manageMissingCells, manageDuplicateInputs
+from manageData import manageMissingCells, manageDuplicateInputs , manageOutlierInputs
 
 # MySQL database connection details
 host = 'localhost'
@@ -85,6 +85,14 @@ print("We here")
 
 #Execute the following function with the table name as parameter to manage possible missing cells on database
 manageMissingCells.execute("Artists")
-
+#Execute the following function with the table name as parameter + the column name to manage the duplicate values on the certain column 
 manageDuplicateInputs.execute("Artists","mbid")
+#Execute the following function with the table name as parameter + the column name to manage outlier/paranormal values on a certain column
+#manageOutlierInputs.execute("Users", "user_id") #doesnt seem to have reason to execute in the current project(may change my mind later)
+
+
+
+
+
+
 
