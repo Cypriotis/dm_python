@@ -15,6 +15,18 @@ api_key = '899c27976ecfa7b4adf9f276b445d62f'
 db_connector = DatabaseConnector(host, username, password, database, port)
 db_connector.connect()
 
+
+db_connector.execute_query('''CREATE TABLE IF NOT EXISTS Users (user_id INT PRIMARY KEY AUTO_INCREMENT, username VARCHAR(254), country VARCHAR(254), favorite_artists VARCHAR(254))''')
+
+db_connector.execute_query('''CREATE TABLE IF NOT EXISTS Artists (artists_name VARCHAR(254),mbid VARCHAR(254),artists_url VARCHAR(254))''')
+
+db_connector.execute_query('''CREATE TABLE IF NOT EXISTS Albums(artists_name VARCHAR(254),album_name VARCHAR(254))''')
+
+db_connector.execute_query('''CREATE TABLE IF NOT EXISTS UsersFavInfo (user_name VARCHAR(254),artists_name VARCHAR(254),album_name VARCHAR(254))''')
+
+db_connector.commit_changes()
+
+
 # Create an instance of the LastFmAPI
 lastfm_api = LastFmAPI(api_key)
 
