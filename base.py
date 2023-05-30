@@ -3,7 +3,6 @@ from lastfm_api import LastFmAPI
 import pandas as pd
 from manageData import manageMissingCells, manageDuplicateInputs , manageOutlierInputs ,exportStatistics , trendSpotter
 from arima import arima
-from barabasi import recommend
 from database_init import database_init
 
 # MySQL database connection details
