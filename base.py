@@ -27,15 +27,19 @@ database_init.execute()
 lastfm_api = LastFmAPI(api_key)
 
 
-usernames = ['Robert', 'Chris', 'Lopes', 'Lia', 'Nicole', 'RJ']
+usernames = ['Robert', 'Mayia', 'Lopes', 'Lia', 'Nicole', 'RJ','Weston','Fae','Twila']
 count = len(usernames)
 
 while count > 0:
         current_name = usernames[count-1]
         user_info = lastfm_api.get_user_info(current_name)
         user_top_artists = lastfm_api.get_user_top_artists(current_name)
+        user_top_tracks = lastfm_api.get_user_top_songs(current_name)
+        
 
         top_artists = user_top_artists['topartists']['artist']
+        # Extract song information from the API response
+        tracks = user_top_tracks['lovedtracks']['track']
 
         name = user_info['user']['name']
         country = user_info['user']['country']
@@ -43,6 +47,22 @@ while count > 0:
         playcount = top_artists[0]['playcount']
         mbid = top_artists[0]['mbid']
         artist_url = top_artists[0]['url']
+
+        #Cleaning unacceptable characters for MariaDB like ' 
+        helper = ""
+        for x in range(3):
+            helper = tracks[x]['name']
+            size = len(helper)
+            new_string = helper.replace("'", "B")
+            tracks[x]['name'] = new_string
+                 
+            
+
+        for x in range(3):
+          query = f"INSERT INTO UserSongs (user_name , song_name) VALUES ('{name}', '{tracks[x]['name']}')"
+          db_connector.execute_query(query)
+          db_connector.commit_changes() 
+
         
         print(playcount)
 
@@ -72,16 +92,16 @@ while count > 0:
 print("We here")
 
 ##Execute the following function with the table name as parameter to manage possible missing cells on database
-#manageMissingCells.execute("Artists")
+manageMissingCells.execute("Artists")
 #Execute the following function with the table name as parameter + the column name to manage the duplicate values on the certain column 
-#manageDuplicateInputs.execute("Artists","mbid")
+manageDuplicateInputs.execute("Artists","mbid")
 #Execute the following function with the table name as parameter + the column name to manage outlier/paranormal values on a certain column
 #manageOutlierInputs.execute("Users", "user_id") #doesnt seem to have reason to execute in the current project(may change my mind later)
 
-#exportStatistics.execute("Users","playcount")
+exportStatistics.execute("Users","playcount")
 
-#trendSpotter.execute()
-#arima.execute()
+trendSpotter.execute()
+arima.execute()
 
 
 
