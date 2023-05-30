@@ -1,7 +1,7 @@
 from db_connect import DatabaseConnector
 from lastfm_api import LastFmAPI
 import pandas as pd
-from manageData import manageMissingCells, manageDuplicateInputs , manageOutlierInputs
+from manageData import manageMissingCells, manageDuplicateInputs , manageOutlierInputs ,exportStatistics , trendSpotter
 
 # MySQL database connection details
 host = 'localhost'
@@ -21,13 +21,13 @@ db_connector.connect()
 #debug action
 db_connector.execute_query('''DROP TABLE Users''')
 
-#db_connector.execute_query('''DROP TABLE Artists''')
+db_connector.execute_query('''DROP TABLE Artists''')
 
 db_connector.execute_query('''DROP TABLE Albums''')
 
 db_connector.execute_query('''DROP TABLE UsersFavInfo''')
 #creating tables if not exists
-db_connector.execute_query('''CREATE TABLE IF NOT EXISTS Users (user_id INT PRIMARY KEY AUTO_INCREMENT, username VARCHAR(254), country VARCHAR(254), favorite_artist VARCHAR(254))''')
+db_connector.execute_query('''CREATE TABLE IF NOT EXISTS Users (user_id INT PRIMARY KEY AUTO_INCREMENT, username VARCHAR(254), country VARCHAR(254), favorite_artist VARCHAR(254), playcount INT)''')
 
 db_connector.execute_query('''CREATE TABLE IF NOT EXISTS Artists (artists_name VARCHAR(254),mbid VARCHAR(254),artist_url VARCHAR(254))''')
 
@@ -55,11 +55,14 @@ while count > 0:
         name = user_info['user']['name']
         country = user_info['user']['country']
         artist_name = top_artists[0]['name']
+        playcount = top_artists[0]['playcount']
         mbid = top_artists[0]['mbid']
         artist_url = top_artists[0]['url']
+        
+        print(playcount)
 
         query = f"INSERT INTO Artists (artists_name, mbid,artist_url) VALUES ('{artist_name}','{mbid}','{artist_url}')"
-        query2 = f"INSERT INTO Users (username, country , favorite_artist) VALUES ('{name}', '{country}' , '{artist_name}')"
+        query2 = f"INSERT INTO Users (username, country , favorite_artist, playcount) VALUES ('{name}', '{country}' , '{artist_name}','{playcount}')"
 
         db_connector.execute_query(query)
         db_connector.execute_query(query2)
@@ -89,6 +92,10 @@ manageMissingCells.execute("Artists")
 manageDuplicateInputs.execute("Artists","mbid")
 #Execute the following function with the table name as parameter + the column name to manage outlier/paranormal values on a certain column
 #manageOutlierInputs.execute("Users", "user_id") #doesnt seem to have reason to execute in the current project(may change my mind later)
+
+exportStatistics.execute("Users","playcount")
+
+trendSpotter.execute()
 
 
 
