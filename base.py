@@ -2,6 +2,7 @@ from db_connect import DatabaseConnector
 from lastfm_api import LastFmAPI
 import pandas as pd
 from manageData import manageMissingCells, manageDuplicateInputs , manageOutlierInputs ,exportStatistics , trendSpotter
+from arima import test
 
 # MySQL database connection details
 host = 'localhost'
@@ -96,6 +97,7 @@ manageDuplicateInputs.execute("Artists","mbid")
 exportStatistics.execute("Users","playcount")
 
 trendSpotter.execute()
+test.test()
 
 
 
