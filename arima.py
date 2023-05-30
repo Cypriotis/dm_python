@@ -5,8 +5,8 @@ from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 
 
-class test:
-    def test():
+class arima:
+    def execute():
             # Read the data from the CSV file
             df = pd.read_csv('file_series.csv')  # Replace 'file.csv' with the actual file name
 

@@ -2,7 +2,9 @@ from db_connect import DatabaseConnector
 from lastfm_api import LastFmAPI
 import pandas as pd
 from manageData import manageMissingCells, manageDuplicateInputs , manageOutlierInputs ,exportStatistics , trendSpotter
-from arima import test
+from arima import arima
+from barabasi import recommend
+from database_init import database_init
 
 # MySQL database connection details
 host = 'localhost'
@@ -18,25 +20,8 @@ api_key = '899c27976ecfa7b4adf9f276b445d62f'
 db_connector = DatabaseConnector(host, username, password, database, port)
 db_connector.connect()
 
-
-#debug action
-db_connector.execute_query('''DROP TABLE Users''')
-
-db_connector.execute_query('''DROP TABLE Artists''')
-
-db_connector.execute_query('''DROP TABLE Albums''')
-
-db_connector.execute_query('''DROP TABLE UsersFavInfo''')
-#creating tables if not exists
-db_connector.execute_query('''CREATE TABLE IF NOT EXISTS Users (user_id INT PRIMARY KEY AUTO_INCREMENT, username VARCHAR(254), country VARCHAR(254), favorite_artist VARCHAR(254), playcount INT)''')
-
-db_connector.execute_query('''CREATE TABLE IF NOT EXISTS Artists (artists_name VARCHAR(254),mbid VARCHAR(254),artist_url VARCHAR(254))''')
-
-db_connector.execute_query('''CREATE TABLE IF NOT EXISTS Albums(artists_name VARCHAR(254),album_name VARCHAR(254))''')
-
-db_connector.execute_query('''CREATE TABLE IF NOT EXISTS UsersFavInfo (user_name VARCHAR(254),artists_name VARCHAR(254),album_name VARCHAR(254))''')
-
-db_connector.commit_changes()
+#initializing the tables of the database
+database_init.execute()
 
 
 # Create an instance of the LastFmAPI
@@ -87,17 +72,23 @@ while count > 0:
 
 print("We here")
 
-#Execute the following function with the table name as parameter to manage possible missing cells on database
-manageMissingCells.execute("Artists")
+##Execute the following function with the table name as parameter to manage possible missing cells on database
+#manageMissingCells.execute("Artists")
 #Execute the following function with the table name as parameter + the column name to manage the duplicate values on the certain column 
-manageDuplicateInputs.execute("Artists","mbid")
+#manageDuplicateInputs.execute("Artists","mbid")
 #Execute the following function with the table name as parameter + the column name to manage outlier/paranormal values on a certain column
 #manageOutlierInputs.execute("Users", "user_id") #doesnt seem to have reason to execute in the current project(may change my mind later)
 
-exportStatistics.execute("Users","playcount")
+#exportStatistics.execute("Users","playcount")
 
-trendSpotter.execute()
-test.test()
+#trendSpotter.execute()
+#arima.execute()
+
+
+
+
+
+#recommend.execute()
 
 
 
