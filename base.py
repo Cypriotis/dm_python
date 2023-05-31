@@ -27,7 +27,7 @@ database_init.execute()
 lastfm_api = LastFmAPI(api_key)
 
 
-usernames = ['Robert', 'Mayia', 'Lopes', 'Lia', 'Nicole', 'RJ','Weston','Fae','Twila']
+usernames = ['Robert', 'Mayia', 'Lopes', 'Lia', 'Nicole', 'RJ','Weston','Fae','Twila'] 
 count = len(usernames)
 
 while count > 0:
@@ -58,10 +58,9 @@ while count > 0:
                  
             
 
-        for x in range(3):
-          query = f"INSERT INTO UserSongs (user_name , song_name) VALUES ('{name}', '{tracks[x]['name']}')"
-          db_connector.execute_query(query)
-          db_connector.commit_changes() 
+        query = f"INSERT INTO UserSongs (user_name , song_name,song_name2,song_name3) VALUES ('{name}', '{tracks[0]['name']}','{tracks[1]['name']}','{tracks[2]['name']}')"
+        db_connector.execute_query(query)
+        db_connector.commit_changes() 
 
         
         print(playcount)

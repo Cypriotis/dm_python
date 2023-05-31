@@ -99,6 +99,8 @@ class exportStatistics:
                 std_dev = df[col1].std()
                 min_value = df[col1].min()
                 max_value = df[col1].max()
+                text = "General Mean: "
+                text += str(mean)
 
                 # Print or use the calculated summary statistics as desired
                 print("Mean:", mean)
@@ -112,6 +114,7 @@ class exportStatistics:
                 plt.xlabel('Value')
                 plt.ylabel('Frequency')
                 plt.title('Histogram of '+col1)
+                plt.text(1.2,-1.1,text, fontsize=12, ha='center', va='center')
 
                 # Visualize the data using a box plot
                 plt.boxplot(df[col1])
