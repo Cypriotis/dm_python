@@ -4,7 +4,8 @@ import pandas as pd
 from manageData import manageMissingCells, manageDuplicateInputs , manageOutlierInputs ,exportStatistics , trendSpotter
 from arima import arima
 from database_init import database_init
-
+from helperAI import chatgpt
+from nameFiltering import filter
 # MySQL database connection details
 host = 'localhost'
 username = 'root'
@@ -21,6 +22,11 @@ db_connector.connect()
 
 #initializing the tables of the database
 database_init.execute()
+
+
+filter.execute()
+
+#chatgpt.execute()
 
 
 # Create an instance of the LastFmAPI

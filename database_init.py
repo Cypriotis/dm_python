@@ -36,4 +36,8 @@ class database_init():
 
         db_connector.execute_query('''CREATE TABLE IF NOT EXISTS UserSongs (user_name VARCHAR(254), song_name VARCHAR(254),song_name2 VARCHAR(254),song_name3 VARCHAR(254))''')
 
+        db_connector.execute_query('''CREATE TABLE IF NOT EXISTS Test (name VARCHAR(254))''')
+
+        db_connector.execute_query('''CREATE TABLE IF NOT EXISTS Filtered (name VARCHAR(254))''')
+
         db_connector.commit_changes()
