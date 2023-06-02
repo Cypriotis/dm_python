@@ -22,6 +22,10 @@ db_connector.connect()
 
 #initializing the tables of the database
 database_init.execute()
+
+#Have a problem with api call limit. Hold for now
+#chatgpt.execute()
+
 #Filter random users engine with users that actually exists on last fm database
 filter.execute()
 #managing duplicate generated names
@@ -31,8 +35,7 @@ manageDuplicateInputs.execute("Filtered","name")
 
 
 
-#Have a problem with api call limit. Hold for now
-#chatgpt.execute()
+
 
 # Create an instance of the LastFmAPI
 lastfm_api = LastFmAPI(api_key)

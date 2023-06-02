@@ -28,6 +28,10 @@ class DatabaseConnector:
 
     def fetchall(self):
         return self.cursor.fetchall()
+    
+    def fetch_one(self):
+        result = self.cursor.fetchone()
+        return result
 
     def execute_query(self, query):
         self.cursor.execute(query)

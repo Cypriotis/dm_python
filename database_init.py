@@ -39,5 +39,7 @@ class database_init():
         db_connector.execute_query('''CREATE TABLE IF NOT EXISTS RandomUsers (name VARCHAR(254))''')
 
         db_connector.execute_query('''CREATE TABLE IF NOT EXISTS Filtered (name TEXT)''')
+        
+        db_connector.execute_query('''CREATE TABLE IF NOT EXISTS Recommends (name VARCHAR(254),song VARCHAR(254), recommend_from_user VARCHAR(254))''')
 
         db_connector.commit_changes()
