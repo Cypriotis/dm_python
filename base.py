@@ -22,21 +22,32 @@ db_connector.connect()
 
 #initializing the tables of the database
 database_init.execute()
-
-
-#WORKING ON THIS
-#CURRENTLY NOT WORKING
-
+#Filter random users engine with users that actually exists on last fm database
 filter.execute()
+#managing duplicate generated names
+manageDuplicateInputs.execute("Filtered","name")
 
+
+
+
+
+#Have a problem with api call limit. Hold for now
 #chatgpt.execute()
-
 
 # Create an instance of the LastFmAPI
 lastfm_api = LastFmAPI(api_key)
 
 
-usernames = ['Robert', 'Mayia', 'Lopes', 'Lia', 'Nicole', 'RJ','Weston','Fae','Twila'] 
+#usernames = ['Robert', 'Mayia', 'Lopes', 'Lia', 'Nicole', 'RJ','Weston','Fae','Twila'] 
+
+
+# Retrieve names from the database 
+query = "SELECT name FROM Filtered"
+db_connector.execute_query(query)
+
+# Fetch all rows and store the values in a list
+usernames = [row[0] for row in db_connector.fetchall()]
+
 count = len(usernames)
 
 while count > 0:
@@ -89,6 +100,9 @@ while count > 0:
             artists_albums = lastfm_api.get_artists_top_albums(artist_name)
             if(flag>0):
              album_name = artists_albums['topalbums']['album'][flag]['name']
+             helper = album_name
+             new_string = helper.replace("'", "B")
+             album_name = new_string
              query = f"INSERT INTO UsersFavInfo (user_name , artists_name, album_name) VALUES ('{current_name}', '{artist_name}', '{album_name}')"
              query2 = f"INSERT INTO Albums (artists_name ,album_name ) VALUES ('{artist_name}','{album_name}')"
              db_connector.execute_query(query)
