@@ -24,6 +24,9 @@ db_connector.connect()
 database_init.execute()
 
 
+#WORKING ON THIS
+#CURRENTLY NOT WORKING
+
 filter.execute()
 
 #chatgpt.execute()

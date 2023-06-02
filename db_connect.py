@@ -26,6 +26,9 @@ class DatabaseConnector:
         if self.conn:
             self.conn.close()
 
+    def fetchall(self):
+        return self.cursor.fetchall()
+
     def execute_query(self, query):
         self.cursor.execute(query)
 
