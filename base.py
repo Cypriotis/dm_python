@@ -6,6 +6,9 @@ from arima import arima
 from database_init import database_init
 from helperAI import chatgpt
 from nameFiltering import filter
+from recommend import recommend
+
+
 # MySQL database connection details
 host = 'localhost'
 username = 'root'
@@ -127,6 +130,11 @@ exportStatistics.execute("Users","playcount")
 
 trendSpotter.execute()
 arima.execute()
+
+recommend.execute()
+
+
+
 
 
 
