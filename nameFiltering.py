@@ -7,7 +7,6 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 
-
 # MySQL database connection details
 host = 'localhost'
 username = 'root'
@@ -29,13 +28,12 @@ db_connector.connect()
 # Create an instance of the LastFmAPI
 lastfm_api = LastFmAPI(api_key)
 
-# Retrieve names from the database 
+# Retrieve names from the database
 query = "SELECT name FROM RandomUsers"
 db_connector.execute_query(query)
 
 # Fetch all rows and store the values in a list
 names = [row[0] for row in db_connector.fetchall()]
-
 
 
 class filter:
@@ -53,22 +51,22 @@ class filter:
             }
 
             # Make the user.getLovedTracks request
-            loved_tracks_response = requests.get(api_url, params=loved_tracks_params)
+            loved_tracks_response = requests.get(
+                api_url, params=loved_tracks_params)
             loved_tracks_data = loved_tracks_response.json()
 
             # Try to get the total loved tracks count
             try:
-                total_loved_tracks = int(loved_tracks_data["lovedtracks"]["@attr"]["total"])
+                total_loved_tracks = int(
+                    loved_tracks_data["lovedtracks"]["@attr"]["total"])
             except KeyError:
                 total_loved_tracks = 0
 
-
             if total_loved_tracks > 3:
                 # Print the total loved tracks count
-                print(f"Total loved tracks for user {username}: {total_loved_tracks}")
+                print(
+                    f"Total loved tracks for user {username}: {total_loved_tracks}")
                 print(name)
-                query=f"INSERT INTO Filtered (name) VALUES ('{name}')"
+                query = f"INSERT INTO Filtered (name) VALUES ('{name}')"
                 db_connector.execute_query(query)
                 db_connector.commit_changes()
-
-                

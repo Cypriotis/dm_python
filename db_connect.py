@@ -1,7 +1,8 @@
 import mysql.connector
 
+
 class DatabaseConnector:
-    def __init__(self, host, username, password, database ,port):
+    def __init__(self, host, username, password, database, port):
         self.host = host
         self.port = port
         self.username = username
@@ -28,7 +29,7 @@ class DatabaseConnector:
 
     def fetchall(self):
         return self.cursor.fetchall()
-    
+
     def fetch_one(self):
         result = self.cursor.fetchone()
         return result
@@ -47,7 +48,7 @@ class DatabaseConnector:
         self.execute_query(query)
         column_names = [desc[0] for desc in self.cursor.description]
         return column_names
-    
+
     def execute_query_with_dataframe(self, query, dataframe):
         for row in dataframe.itertuples(index=False):
             self.execute_query(query, row)
