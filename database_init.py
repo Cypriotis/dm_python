@@ -25,7 +25,9 @@ class database_init():
 
         db_connector.execute_query('''DROP TABLE IF EXISTS UsersFavInfo''')
 
-        db_connector.execute_query('''DROP TABLE IF EXISTS UserSongs''')
+        db_connector.execute_query('''DROP TABLE IF EXISTS UsersSongs''')
+
+        db_connector.execute_query('''DROP TABLE IF EXISTS Recommends''')
         # creating tables if not exists
         db_connector.execute_query(
             '''CREATE TABLE IF NOT EXISTS Users (user_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, username VARCHAR(254), country VARCHAR(254), favorite_artist VARCHAR(254), playcount INT)''')

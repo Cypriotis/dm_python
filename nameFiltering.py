@@ -65,7 +65,7 @@ class filter:
             if total_loved_tracks > 3:
                 # Print the total loved tracks count
                 print(
-                    f"Total loved tracks for user {username}: {total_loved_tracks}")
+                    f"Total loved tracks for user {name}: {total_loved_tracks}")
                 print(name)
                 query = f"INSERT INTO Filtered (name) VALUES ('{name}')"
                 db_connector.execute_query(query)

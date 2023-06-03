@@ -19,6 +19,7 @@ class DatabaseConnector:
             password=self.password,
             database=self.database
         )
+        self.cursor = self.conn.cursor(buffered=True)  # Create a buffered cursor
         self.cursor = self.conn.cursor()
 
     def disconnect(self):

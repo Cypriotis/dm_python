@@ -1,0 +1,38 @@
+import csv
+import random
+
+# Load user_money_rates.csv
+with open('csv/user_money_rates.csv', 'r') as file:
+    reader = csv.reader(file)
+    user_money_rates = list(reader)
+
+# Load album_price.csv
+with open('csv/album_price.csv', 'r') as file:
+    reader = csv.reader(file)
+    album_prices = list(reader)
+
+# Convert desired rates to float
+desired_rates = [float(rate) for rate in user_money_rates[0][1:]]
+
+# Convert album prices to float
+album_prices = [float(price[0]) for price in album_prices]
+
+# Select 50 random albums
+random_albums = random.sample(range(len(album_prices)), 50)
+
+# Sort albums by desired rate in descending order
+random_albums.sort(key=lambda x: desired_rates[x], reverse=True)
+
+# Initialize selected albums for each user
+selected_albums = [[] for _ in range(100)]
+
+# Assign albums to users based on their desired rate
+for album in random_albums:
+    for user in range(100):
+        if album_prices[album] <= float(user_money_rates[user][0]):
+            selected_albums[user].append(album)
+            break
+
+# Print selected albums for each user
+for user, albums in enumerate(selected_albums, 1):
+    print(f"User {user}: Selected Albums - {albums}")
