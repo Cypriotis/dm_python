@@ -10,6 +10,7 @@ from recommend import recommend
 import random
 from generateRandomLatLon import generate_synthetic_locations
 from geneticAlgo import geneticAlgo
+from geoplotExec import geoplotExec
 
 
 # MySQL database connection details
@@ -139,6 +140,9 @@ recommend.execute()
 if geneticAlgo.genAlgo():
     print("Exported data on file user_selections.csv")
 else:print("Problem with geneticalgo")
+
+geoplotExec.exec()
+
 
 
 
