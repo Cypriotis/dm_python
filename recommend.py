@@ -71,7 +71,7 @@ class recommend():
             query= f"SELECT song_name FROM UserSongs WHERE user_name= '{item}'"
             db_connector.execute_query(query)
             song_to_recommend=db_connector.fetch_one()
-            print(type(song_to_recommend))
+            print(song_to_recommend)
             query = f'''
         INSERT INTO Recommends (name,song,recommend_from_user) SELECT '{user}',song_name,'{item}' FROM UserSongs
         WHERE user_name = '{item}'

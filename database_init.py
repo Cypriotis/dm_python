@@ -28,7 +28,12 @@ class database_init():
         db_connector.execute_query('''DROP TABLE IF EXISTS UsersSongs''')
 
         db_connector.execute_query('''DROP TABLE IF EXISTS Recommends''')
+
+        db_connector.execute_query('''DROP TABLE IF EXISTS LatLon''')
         # creating tables if not exists
+        db_connector.execute_query(
+            '''CREATE TABLE IF NOT EXISTS LatLon (name VARCHAR(254),lat FLOAT,lon FLOAT,song1 VARCHAR(254),song1_lat FLOAT,song1_lon FLOAT,song2 VARCHAR(254),song2_lat FLOAT,song2_lon FLOAT,song3 VARCHAR(254),song3_lat FLOAT,song3_lon FLOAT)''')
+        
         db_connector.execute_query(
             '''CREATE TABLE IF NOT EXISTS Users (user_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, username VARCHAR(254), country VARCHAR(254), favorite_artist VARCHAR(254), playcount INT)''')
 

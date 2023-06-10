@@ -7,6 +7,8 @@ from database_init import database_init
 from helperAI import chatgpt
 from nameFiltering import filter
 from recommend import recommend
+import random
+from generateRandomLatLon import generate_synthetic_locations
 
 
 # MySQL database connection details
@@ -68,6 +70,11 @@ while count > 0:
     mbid = top_artists[0]['mbid']
     artist_url = top_artists[0]['url']
 
+    ##Generate random lat lot for user and their 3 loved songs generate_synthetic_locations(number of pairs to generate, max distance from each other)
+    locations=generate_synthetic_locations(4, 1000)
+    print(locations[0][0])
+
+
     # Cleaning unacceptable characters for MariaDB like '
     helper = ""
     for x in range(3):
@@ -80,11 +87,14 @@ while count > 0:
     db_connector.execute_query(query)
     db_connector.commit_changes()
 
-    print(playcount)
+    query = f"INSERT INTO LatLon (name, lat, lon, song1, song1_lat, song1_lon, song2, song2_lat, song2_lon, song3, song3_lat, song3_lon) VALUES ('{name}','{locations[0][0][0]}','{locations[0][0][1]}', '{tracks[0]['name']}','{locations[0][1][0]}','{locations[0][1][1]}','{tracks[1]['name']}','{locations[0][2][0]}','{locations[0][2][1]}','{tracks[2]['name']}','{locations[0][3][0]}','{locations[0][3][1]}')"
+    db_connector.execute_query(query)
+    db_connector.commit_changes()
+
 
     query = f"INSERT INTO Artists (artists_name, mbid,artist_url) VALUES ('{artist_name}','{mbid}','{artist_url}')"
     query2 = f"INSERT INTO Users (username, country , favorite_artist, playcount) VALUES ('{name}', '{country}' , '{artist_name}','{playcount}')"
-
+    
     db_connector.execute_query(query)
     db_connector.execute_query(query2)
     db_connector.commit_changes()
@@ -120,9 +130,8 @@ manageDuplicateInputs.execute("UserSongs", "user_name")
 exportStatistics.execute("Users", "playcount")
 
 trendSpotter.execute()
+
 arima.execute()
 
 recommend.execute()
 
-
-# recommend.execute()
