@@ -31,7 +31,7 @@ db_connector.connect()
 database_init.execute()
 
 # Have a problem with api call limit. Hold for now
-# chatgpt.execute()
+#chatgpt.execute()
 
 # Filter random users engine with users that actually exists on last fm database
 filter.execute()
@@ -141,6 +141,9 @@ if geneticAlgo.genAlgo():
     print("Exported data on file user_selections.csv")
 else:print("Problem with geneticalgo")
 
+#Generating a map with points based on synthetic lat lot of favorites song of each user@
+#Calculating global averga
+#Doing the assumption that if someone has average distance of their songs < of the globalaverage/2 most probabl likes similar type songs (based on region and culture/distances)
 geoplotExec.exec()
 
 

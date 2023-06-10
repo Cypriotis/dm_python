@@ -27,8 +27,58 @@ def calculate_distance(lat1, lon1, lat2, lon2):
         distance = radius * c
 
         return distance
+def test(average_all):
+        ave=average_all
+        average = 0
+         # MySQL database connection details
+        host = 'localhost'
+        user = 'root'
+        password = ''
+        database = 'DeMa'
+        port = '3308'
+
+        # Establish a connection to the MySQL database
+        connection = mysql.connector.connect(
+            host=host,
+            user=user,
+            password=password,
+            database=database,
+            port=port
+        )
+
+        # Retrieve data from MySQL table
+        query = 'SELECT name, lon, lat, song1, song1_lon, song1_lat, song2, song2_lon, song2_lat, song3, song3_lon, song3_lat FROM LatLon'
+        df = pd.read_sql(query, connection)
+
+        # Generate four points for each row
+        points = []
+
+
+        sum_of_distance = 0
+
+        for _, row in df.iterrows():
+            name = row['name']
+            lat = row['lat']
+            lon = row['lon']
+            
+            # Generate four points by modifying the latitude and longitude
+            point1 = (lat, lon)
+            point2 = (row['song1_lat'], row['song1_lon'])
+            point3 = (row['song2_lat'], row['song2_lon'])
+            point4 = (row['song3_lat'], row['song3_lon'])
+
+            sum_of_distance += calculate_distance(row['song1_lat'], row['song1_lon'], row['song2_lat'], row['song2_lon'])
+            sum_of_distance += calculate_distance(row['song2_lat'], row['song2_lon'], row['song3_lat'], row['song3_lon'])
+            sum_of_distance += calculate_distance(row['song3_lat'], row['song3_lon'], row['song1_lat'], row['song1_lon'])
+
+            sum_of_distance = sum_of_distance/3
+            average+=sum_of_distance
+            if(average < (ave/2)):
+                print("The user %s prefers songs with similar culture features"%name)
+                print(f'Global average : {ave} User average : {average}')
 
 class geoplotExec():
+    average_all = 0
 
     def exec():
         average = 0
@@ -64,7 +114,7 @@ class geoplotExec():
             lon = row['lon']
             
             # Generate four points by modifying the latitude and longitude
-            #point1 = (lat, lon)
+            point1 = (lat, lon)
             point2 = (row['song1_lat'], row['song1_lon'])
             point3 = (row['song2_lat'], row['song2_lon'])
             point4 = (row['song3_lat'], row['song3_lon'])
@@ -134,8 +184,14 @@ class geoplotExec():
         plt.show()
 
         print(average)
+        average_all = average
+        print(average_all)
+        test(average_all)
 
         # Close the MySQL connection
         connection.close()
+    
+
+         
 
 
