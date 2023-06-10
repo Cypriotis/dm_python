@@ -2,6 +2,34 @@ import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import mysql.connector
+import math
+
+
+average = 0
+
+def calculate_distance(lat1, lon1, lat2, lon2):
+    # Convert latitude and longitude from degrees to radians
+    lat1_rad = math.radians(lat1)
+    lon1_rad = math.radians(lon1)
+    lat2_rad = math.radians(lat2)
+    lon2_rad = math.radians(lon2)
+
+    # Calculate the differences between the latitudes and longitudes
+    dlat = lat2_rad - lat1_rad
+    dlon = lon2_rad - lon1_rad
+
+    # Apply the haversine formula
+    a = math.sin(dlat/2)**2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(dlon/2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    radius = 6371  # Radius of the Earth in kilometers
+
+    # Calculate the distance
+    distance = radius * c
+
+    return distance
+
+
+
 
 # MySQL database connection details
 host = 'localhost'
@@ -25,6 +53,10 @@ df = pd.read_sql(query, connection)
 
 # Generate four points for each row
 points = []
+
+
+sum_of_distance = 0
+
 for _, row in df.iterrows():
     name = row['name']
     lat = row['lat']
@@ -35,7 +67,14 @@ for _, row in df.iterrows():
     point2 = (row['song1_lat'], row['song1_lon'])
     point3 = (row['song2_lat'], row['song2_lon'])
     point4 = (row['song3_lat'], row['song3_lon'])
-    
+
+    sum_of_distance += calculate_distance(row['song1_lat'], row['song1_lon'], row['song2_lat'], row['song2_lon'])
+    sum_of_distance += calculate_distance(row['song2_lat'], row['song2_lon'], row['song3_lat'], row['song3_lon'])
+    sum_of_distance += calculate_distance(row['song3_lat'], row['song3_lon'], row['song1_lat'], row['song1_lon'])
+
+    sum_of_distance = sum_of_distance/3
+    average+=sum_of_distance
+
     # Append the points to the list
     points.append([name, point2, point3, point4])
 
@@ -53,10 +92,10 @@ points_df = points_df.drop(columns='point')
 gdf = gpd.GeoDataFrame(points_df, geometry=gpd.points_from_xy(points_df.lon, points_df.lat))
 
 # Read the shapefile or GeoJSON file for Greece
-greece_map = gpd.read_file('france-regions.geojson')
+france_map = gpd.read_file('france-regions.geojson')
 
 # Plot the base map of Greece
-greece_map.plot(color='lightgray')
+france_map.plot(color='lightgray')
 
 # Customize visualization settings
 unique_names = points_df['name'].unique()
@@ -76,14 +115,26 @@ gdf.plot(color=gdf['color'], ax=plt.gca())
 # Set labels for x and y axes
 plt.xlabel('Longitude')
 plt.ylabel('Latitude')
+text = 'Average distance in km for each other dots: {:.2f}'.format(average)
+text2 = 'Map of France'
+# Add text outside the plot
+plt.annotate(text, xy=(1, 1), xytext=(10, -10), textcoords='offset points', ha='right', va='top')
 
 # Create a legend for the colors
 legend_elements = [plt.Line2D([0], [0], marker='o', color='w', label=name, markerfacecolor=color)
                    for name, color in name_color_dict.items()]
 plt.legend(handles=legend_elements, title='Names', loc='upper right')
+# Add text outside the plot
+plt.text(2, 52, text+" km", fontsize=12, ha='center', va='center')
+plt.text(2, 53, text2, fontsize=12, ha='center', va='center')
+
 
 # Show the plot
 plt.show()
 
+print(average)
+
 # Close the MySQL connection
 connection.close()
+
+

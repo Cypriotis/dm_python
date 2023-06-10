@@ -9,6 +9,7 @@ from nameFiltering import filter
 from recommend import recommend
 import random
 from generateRandomLatLon import generate_synthetic_locations
+from geneticAlgo import geneticAlgo
 
 
 # MySQL database connection details
@@ -134,4 +135,11 @@ trendSpotter.execute()
 arima.execute()
 
 recommend.execute()
+
+if geneticAlgo.genAlgo():
+    print("Exported data on file user_selections.csv")
+else:print("Problem with geneticalgo")
+
+
+
 
