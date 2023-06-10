@@ -71,7 +71,7 @@ while count > 0:
     artist_url = top_artists[0]['url']
 
     ##Generate random lat lot for user and their 3 loved songs generate_synthetic_locations(number of pairs to generate, max distance from each other)
-    locations=generate_synthetic_locations(4, 1000)
+    locations=generate_synthetic_locations(4, 3500)
     print(locations[0][0])
 
 
